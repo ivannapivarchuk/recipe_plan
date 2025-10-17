@@ -82,9 +82,3 @@ The Recipe Planner allows users to:
 
 ---
 
-✨ *Project created as part of the Front-End Web Programming (Angular) course.*
-✨ *Проєкт створено в межах дисципліни "Веб-програмування Front-End (Angular)".*
-
----
-
-Хочеш, щоб я адаптувала цей README під структуру твого Angular-проєкту (наприклад, додати секцію про запуск: `npm install`, `ng serve` і т.д.)?
