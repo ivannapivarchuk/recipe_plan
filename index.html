@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Recipe Plan – Рецептурний планувальник</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top-bar">
+    <div class="logo">
+        <span class="logo-main">Recipe</span><span class="logo-accent">Plan</span>
+    </div>
+    <nav class="main-nav">
+        <button class="nav-link active" data-target="recipes-section">Рецепти</button>
+        <button class="nav-link" data-target="menu-section">Планувальник меню</button>
+        <button class="nav-link" data-target="shopping-section">Список покупок</button>
+        <button class="nav-link" data-target="favorites-section">Улюблені</button>
+        <button class="nav-link" data-target="about-section">Про сайт</button>
+    </nav>
+    <div class="user-panel">
+        <span class="user-label">Користувач: <strong id="current-user-label">Гість</strong></span>
+        <button id="auth-toggle-btn" class="secondary-btn small">Увійти / Реєстрація</button>
+    </div>
+</header>
+
+<section id="auth-panel" class="auth-panel hidden">
+    <div class="card auth-card">
+        <div class="auth-tabs">
+            <button class="auth-tab-btn active" data-auth-tab="login">Вхід</button>
+            <button class="auth-tab-btn" data-auth-tab="register">Реєстрація</button>
+        </div>
+        <div id="auth-login" class="auth-tab visible">
+            <h2>Вхід</h2>
+            <p class="muted">Для навчальних цілей дані зберігаються лише в цьому браузері.</p>
+            <div class="field">
+                <label for="login-identifier">Логін або email</label>
+                <input type="text" id="login-identifier" placeholder="student або student@example.com">
+            </div>
+            <div class="field">
+                <label for="login-password">Пароль</label>
+                <input type="password" id="login-password" placeholder="Пароль">
+            </div>
+            <div class="form-actions">
+                <button id="login-btn" class="primary-btn">Увійти</button>
+            </div>
+        </div>
+        <div id="auth-register" class="auth-tab hidden">
+            <h2>Реєстрація</h2>
+            <div class="field">
+                <label for="reg-username">Логін</label>
+                <input type="text" id="reg-username" placeholder="student">
+            </div>
+            <div class="field">
+                <label for="reg-email">Email</label>
+                <input type="email" id="reg-email" placeholder="student@example.com">
+            </div>
+            <div class="field">
+                <label for="reg-password">Пароль</label>
+                <input type="password" id="reg-password" placeholder="Пароль">
+            </div>
+            <div class="form-actions">
+                <button id="register-btn" class="primary-btn">Зареєструватися</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<main class="container">
+    <!-- РОЗДІЛ РЕЦЕПТІВ -->
+    <section id="recipes-section" class="page-section visible">
+        <div class="section-header">
+            <h1>Рецепти</h1>
+            <div class="section-actions">
+                <button id="import-recipe-file-btn" class="secondary-btn">Імпорт з TXT</button>
+                <input type="file" id="import-file-input" accept=".txt" style="display:none">
+                <button id="add-recipe-btn" class="primary-btn">+ Додати рецепт</button>
+            </div>
+        </div>
+
+        <div class="filters-row">
+            <div class="field">
+                <label for="search-input">Пошук за назвою</label>
+                <input type="text" id="search-input" placeholder="Наприклад, Борщ">
+            </div>
+            <div class="field">
+                <label for="category-filter">Категорія</label>
+                <select id="category-filter">
+                    <option value="all">Усі</option>
+                    <option value="Сніданок">Сніданок</option>
+                    <option value="Обід">Обід</option>
+                    <option value="Вечеря">Вечеря</option>
+                    <option value="Десерт">Десерт</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="recipes-list" class="cards-grid">
+            <!-- Список рецептів рендериться скриптом -->
+        </div>
+
+        <div id="recipe-details" class="recipe-details hidden">
+            <!-- Деталі рецепта -->
+        </div>
+    </section>
+
+    <!-- ФОРМА ДОДАВАННЯ / РЕДАГУВАННЯ РЕЦЕПТА -->
+    <section id="recipe-form-section" class="page-section hidden">
+        <div class="section-header">
+            <h1 id="recipe-form-title">Новий рецепт</h1>
+        </div>
+        <form id="recipe-form" class="card">
+            <input type="hidden" id="recipe-id">
+            <div class="field">
+                <label for="recipe-title">Назва рецепта</label>
+                <input type="text" id="recipe-title" required placeholder="Наприклад, Омлет із сиром">
+            </div>
+            <div class="field">
+                <label for="recipe-category">Категорія</label>
+                <select id="recipe-category" required>
+                    <option value="">Оберіть категорію</option>
+                    <option value="Сніданок">Сніданок</option>
+                    <option value="Обід">Обід</option>
+                    <option value="Вечеря">Вечеря</option>
+                    <option value="Десерт">Десерт</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="recipe-time">Час приготування (хв)</label>
+                <input type="number" id="recipe-time" min="1" placeholder="Наприклад, 20">
+            </div>
+            <div class="field">
+                <label for="recipe-servings">Кількість порцій</label>
+                <input type="number" id="recipe-servings" min="1" placeholder="Наприклад, 2">
+            </div>
+            <div class="field">
+                <label for="recipe-calories">Калорійність на порцію (ккал)</label>
+                <input type="number" id="recipe-calories" min="0" placeholder="Наприклад, 320">
+            </div>
+            <div class="field">
+                <label for="recipe-description">Короткий опис</label>
+                <textarea id="recipe-description" rows="2" placeholder="Що це за страва, до чого підходить"></textarea>
+            </div>
+            <div class="field">
+                <label for="recipe-ingredients">Інгредієнти (кожен з нового рядка)</label>
+                <textarea id="recipe-ingredients" rows="5" placeholder="2 яйця
+50 мл молока
+щіпка солі
+20 г твердого сиру"></textarea>
+            </div>
+            <div class="field">
+                <label for="recipe-steps">Кроки приготування (кожен з нового рядка)</label>
+                <textarea id="recipe-steps" rows="5" placeholder="Збийте яйця з молоком.
+Додайте сіль і натертий сир.
+Обсмажте на сковороді до готовності."></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="primary-btn">Зберегти</button>
+                <button type="button" id="cancel-recipe-btn" class="secondary-btn">Скасувати</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- ПЛАНУВАЛЬНИК МЕНЮ -->
+    <section id="menu-section" class="page-section hidden">
+        <div class="section-header">
+            <h1>Планувальник меню</h1>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="daily-menu">Денне меню</button>
+            <button class="tab-btn" data-tab="weekly-menu">Тижневе меню</button>
+        </div>
+
+        <div id="daily-menu" class="tab-content visible card">
+            <h2>Меню на день</h2>
+            <p class="muted">Оберіть рецепти на один день: сніданок, обід і вечерю.</p>
+            <div class="menu-row">
+                <div class="field">
+                    <label for="daily-breakfast">Сніданок</label>
+                    <select id="daily-breakfast"></select>
+                </div>
+                <div class="field">
+                    <label for="daily-lunch">Обід</label>
+                    <select id="daily-lunch"></select>
+                </div>
+                <div class="field">
+                    <label for="daily-dinner">Вечеря</label>
+                    <select id="daily-dinner"></select>
+                </div>
+            </div>
+            <p class="muted" id="daily-calories-info"></p>
+            <div class="form-actions">
+                <button id="save-daily-menu-btn" class="primary-btn">Зберегти денне меню</button>
+                <button id="share-daily-menu-btn" class="secondary-btn">Поділитися денним меню</button>
+            </div>
+        </div>
+
+        <div id="weekly-menu" class="tab-content hidden card">
+            <h2>Меню на тиждень</h2>
+            <p class="muted">Заплануйте страви на кожен день тижня.</p>
+            <div id="weekly-menu-grid" class="weekly-grid">
+                <!-- Сітка днів з селектами генерується скриптом -->
+            </div>
+            <p class="muted" id="weekly-calories-info"></p>
+            <div class="form-actions">
+                <button id="save-weekly-menu-btn" class="primary-btn">Зберегти тижневе меню</button>
+                <button id="share-weekly-menu-btn" class="secondary-btn">Поділитися тижневим меню</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- СПИСОК ПОКУПОК -->
+    <section id="shopping-section" class="page-section hidden">
+        <div class="section-header">
+            <h1>Список покупок</h1>
+            <button id="generate-shopping-list" class="primary-btn">Оновити зі збереженого меню</button>
+        </div>
+        <div id="shopping-list-container" class="card">
+            <p class="muted" id="shopping-empty-msg">
+                Поки що список порожній. Збережіть денне або тижневе меню, щоб сформувати список покупок.
+            </p>
+            <ul id="shopping-list" class="shopping-list">
+                <!-- Пункти списку покупок -->
+            </ul>
+            <div class="form-actions">
+                <button id="share-shopping-list-btn" class="secondary-btn">Поділитися списком</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- УЛЮБЛЕНІ РЕЦЕПТИ -->
+    <section id="favorites-section" class="page-section hidden">
+        <div class="section-header">
+            <h1>Улюблені рецепти</h1>
+        </div>
+        <div id="favorites-list" class="cards-grid">
+            <!-- Список улюблених рендериться скриптом -->
+        </div>
+    </section>
+
+    <!-- ПРО САЙТ -->
+    <section id="about-section" class="page-section hidden">
+        <div class="section-header">
+            <h1>Про сайт Recipe Plan</h1>
+        </div>
+        <div class="card">
+            <p>
+                <strong>Recipe Plan</strong> — навчальний проєкт рецептурного сайту для лабораторної роботи з програмування.
+                Він показує, як організувати роботу з рецептами, меню та списком покупок у зручному вебінтерфейсі.
+            </p>
+            <ul>
+                <li>Перегляд та пошук рецептів за назвою і категорією.</li>
+                <li>Додавання, редагування й видалення рецептів.</li>
+                <li>Планування денного і тижневого меню.</li>
+                <li>Автоматичне формування списку покупок.</li>
+                <li>Позначення улюблених рецептів.</li>
+                <li>Зберігання даних окремо для кожного користувача (профілі).</li>
+                <li>Проста оцінка калорійності страв та меню.</li>
+                <li>Експорт рецепта в текстовий файл та можливість друку (PDF через друк браузера).</li>
+                <li>Поділитися рецептом, меню чи списком покупок за один клік.</li>
+                <li>Демонстраційна інтеграція з «розумною кухнею» (кнопка-заглушка).</li>
+            </ul>
+            <p class="muted">
+                Імпорт рецептів реалізовано через завантаження текстового файлу у форматі:
+            </p>
+<pre class="code-block">Назва рецепта
+Категорія
+Короткий опис
+
+інгредієнт 1
+інгредієнт 2
+...
+
+крок 1
+крок 2
+...</pre>
+            <p class="muted">
+                Усі дані зберігаються в <strong>localStorage</strong> браузера, тому сайт працює без серверної частини
+                і підходить для демонстрації основ фронтенд- та клієнтської логіки.
+            </p>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <span>Recipe Plan · Лабораторна робота з програмування</span>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
